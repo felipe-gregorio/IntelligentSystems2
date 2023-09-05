@@ -1,6 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from random import shuffle
+from sklearn import datasets
 
 
 def ADALINE_Online(X, W, tol_error, max_epochs, bias):
@@ -30,23 +31,27 @@ def ADALINE_Online(X, W, tol_error, max_epochs, bias):
     return W, errors
 
 
-# Exemplo com uma porta lógica AND
-X = np.array([[0, 0], [0, 1], [1, 0], [1, 1]])
+iris = datasets.load_iris()
+X = iris.data[:, :2]
+
+D = iris.target
+
+X_mean = X.mean(axis=0)
+X_std = X.std(axis=0)
+X = (X - X_mean) / (X_std + 1e-8)
+X = np.hstack((X, np.ones((X.shape[0], 1))))
+
 W = np.random.rand(X.shape[1])
-D = np.array([0, 0, 0, 1])
 bias = 1.0
 tol_error = 0.001
 max_epochs = 1000
 
 final_weights, errors = ADALINE_Online(X, W, tol_error, max_epochs, bias)
 
-plt.scatter(range(len(D)), D, label='Esperado', marker='o', color='blue')
-plt.scatter(range(len(D)), np.dot(X, final_weights) +
-            bias, label='Obtido', marker='x', color='red')
-plt.xlabel('Amostras')
-plt.ylabel('Saída')
-plt.title('ADALINE - Porta lógica AND')
-plt.legend()
+plt.plot(range(len(errors)), errors)
+plt.xlabel('Épocas')
+plt.ylabel('Erro Quadrático Médio (MSE)')
+plt.title('Curva de Aprendizado do ADALINE para o Conjunto de Dados Iris')
 plt.show()
 
 print("Pesos finais:", final_weights)
