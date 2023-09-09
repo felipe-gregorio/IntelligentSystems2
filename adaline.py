@@ -1,3 +1,6 @@
+# Felipe Galvão Gregorio 
+# Código ADALINE - SI2
+
 import numpy as np
 import matplotlib.pyplot as plt
 from random import shuffle
@@ -14,6 +17,7 @@ def ADALINE_Online(X, W, tol_error, max_epochs, bias, learning_rate):
         shuffle(indices)
 
         for i in indices:
+            # Cálculo do sinal do neurônio (spike)
             V = np.dot(W, X[i]) + (bias * W[-1])
             Y = V
             error += (D[i] - Y) ** 2
@@ -24,9 +28,9 @@ def ADALINE_Online(X, W, tol_error, max_epochs, bias, learning_rate):
         epochs += 1
         if mse < tol_error:
             break
-
     return W, errors
 
+# Inicializando dataset iris
 iris = datasets.load_iris()
 X = iris.data[:, :2]
 D = iris.target
@@ -34,23 +38,25 @@ D = iris.target
 # Normalização das características usando StandardScaler
 scaler = StandardScaler()
 X = scaler.fit_transform(X)
+X = np.c_[X, np.ones(X.shape[0])]
 
-X = np.hstack((X, np.ones((X.shape[0], 1))))
+# Inicialização dos pesos 
+W = np.random.rand(X.shape[1])
+print('W:', W)
 
-# Inicialização dos pesos mais próximos de zero
-W = np.array([0.01, 0.02, 0.03])
-
+# Parametros do adaline
 bias = 1.0
 tol_error = 0.0001
-max_epochs = 100  # Alterando max_epochs para 100
-learning_rate = 0.0001  # Alterando learning_rate para 0.0001
+max_epochs = 100 
+learning_rate = 0.0001 
 
 final_weights, errors = ADALINE_Online(X, W, tol_error, max_epochs, bias, learning_rate)
 
+# plot do gráfico 
 plt.plot(range(len(errors)), errors)
 plt.xlabel('Épocas')
 plt.ylabel('Erro Quadrático Médio (MSE)')
-plt.title('Curva de Aprendizado do ADALINE para o Conjunto de Dados Iris')
+plt.title('Curva de Aprendizado do ADALINE')
 plt.show()
 
 print("Pesos finais:", final_weights)
